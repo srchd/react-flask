@@ -1,47 +1,38 @@
-import React, { useState } from 'react'
-import axios from 'axios'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './components/Login';
+import Profile from './components/Profile';
+import Header from './components/Header';
+import useToken from './components/useToken';
+import './App.css';
+import React from 'react';
 
 function App() {
-  const [members, setMembers] = useState([{}])
+  const { token, removeToken, setToken } = useToken();
+  return(
+    <BrowserRouter>
+      <div className='App'>
+        <Header token={removeToken}/>
+        {!token && token!=="" &&token !== undefined?
+          <Login setToken={setToken} />
+          :(
+            <>
+              <Routes>
+                asd
+                <Route path="/profile" element={<Profile token={token} setToken={setToken} />} />
+                <Route path="/" element={<Home />} />
+              </Routes>
+            </>
+          )
+        }
+      </div>
+    </BrowserRouter>
+  );
 
-  function getMembers(){
-   axios({
-    method:'GET',
-    url:'/members',
-   }).then((res) => {
-    const data = res.data
-    setMembers(data)
-   })
+  function Home(){
+    return (
+      <a href='/profile'>Profile</a>
+      )
   }
-
-  // function getData() {
-  //   axios({
-  //     method: "GET",
-  //     url:"/profile",
-  //   })
-  //   .then((response) => {
-  //     const res =response.data
-  //     setMembers((res))
-  //   }).catch((error) => {
-  //     if (error.response) {
-  //       console.log(error.response)
-  //       console.log(error.response.status)
-  //       console.log(error.response.headers)
-  //       }
-  //   })}
-
-  return (
-    <div>
-      <button onClick={getMembers}>Get Members!</button>
-      {(typeof members.members === 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-        members.members.map((mem, i) =>(
-          <p key={i}>Member {i}: {mem}</p>
-        ))
-      )}
-    </div>
-  )
 }
 
-export default App
+export default App;
